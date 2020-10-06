@@ -17,6 +17,7 @@ from pygame.locals import (
   K_x,
   KEYDOWN,
   QUIT,
+  FULLSCREEN,
 )
 
 if __name__ == "__main__":
@@ -35,7 +36,7 @@ if __name__ == "__main__":
   SCREEN_HEIGHT = NATIVE_HEIGHT
 
   # create screen object
-  screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+  screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT), FULLSCREEN)
 
   # set window caption
   pygame.display.set_caption("Ninja Trainer")
@@ -102,18 +103,26 @@ if __name__ == "__main__":
     # up
     if keys[K_UP] or keys[K_w]:
       characterY -= velocity
+      if characterY < 0:
+        characterY = 0
 
     # down
     if keys[K_DOWN] or keys[K_s]:
       characterY += velocity
+      if characterY+characterHeight > SCREEN_HEIGHT:
+        characterY = SCREEN_HEIGHT-characterHeight
 
     # left
     if keys[K_LEFT] or keys[K_a]:
       characterX -= velocity
+      if characterX < 0:
+        characterX = 0
 
     # right
     if keys[K_RIGHT] or keys[K_d]:
       characterX += velocity
+      if characterX+characterWidth > SCREEN_WIDTH:
+        characterX = SCREEN_WIDTH-characterWidth
 
 
     screen.fill((0,0,0))
