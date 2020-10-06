@@ -88,28 +88,6 @@ if __name__ == "__main__":
         # if escape, exit
         if event.key == K_ESCAPE:
           running = False
-        
-        # directional
-        # add WASD
-        if event.key == K_UP or event.key == K_w:
-          # up
-          print("move up")
-          characterY -= velocity
-
-        if event.key == K_DOWN or event.key == K_s:
-          # down
-          print("move down")
-          characterY += velocity
-
-        if event.key == K_LEFT or event.key == K_a:
-          # left
-          print("move left")
-          characterX -= velocity
-
-        if event.key == K_RIGHT or event.key == K_d:
-          # right
-          print("move right")
-          characterX += velocity
 
         if event.key == K_x:
           player.earn_xp(100)
@@ -117,6 +95,26 @@ if __name__ == "__main__":
       # click the close button
       if event.type == QUIT:
         running = False
+
+    keys = pygame.key.get_pressed()
+    
+    # movement
+    # up
+    if keys[K_UP] or keys[K_w]:
+      characterY -= velocity
+
+    # down
+    if keys[K_DOWN] or keys[K_s]:
+      characterY += velocity
+
+    # left
+    if keys[K_LEFT] or keys[K_a]:
+      characterX -= velocity
+
+    # right
+    if keys[K_RIGHT] or keys[K_d]:
+      characterX += velocity
+
 
     screen.fill((0,0,0))
     characterRect = pygame.draw.rect(screen, (255, 0, 0), (characterX, characterY, characterWidth, characterHeight))
