@@ -2,6 +2,7 @@
 import pygame
 import character
 import player
+import game_map
 
 # import locals for key coordinates
 from pygame.locals import (
@@ -17,60 +18,64 @@ from pygame.locals import (
   K_x,
   KEYDOWN,
   QUIT,
-  FULLSCREEN,
+)
+
+from config import (
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT,
+  characterHeight,
+  characterWidth,
+  velocity,
+  screen,
+  Clock
 )
 
 if __name__ == "__main__":
 
   character_data = character.get_character()
-  # initialize game
-  pygame.init()
-
-  # get native screen size
-  screenInfo = pygame.display.Info()
-  NATIVE_WIDTH = screenInfo.current_w # 800
-  NATIVE_HEIGHT = screenInfo.current_h # 600
-
-  # set screen dimensions
-  SCREEN_WIDTH = NATIVE_WIDTH
-  SCREEN_HEIGHT = NATIVE_HEIGHT
-
-  # create screen object
-  screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT), FULLSCREEN)
-
-  # set window caption
-  pygame.display.set_caption("Ninja Trainer")
-
-  Clock = pygame.time.Clock()
-
-  # set character stuff
-  characterWidth = 40
-  characterHeight = 60
-  velocity = 25
 
   try:
-    characterX = character_data["characterX"]
+    characterX = character_data["x"]
   except KeyError:
     characterX = 50
 
   try:
-    characterY = character_data["characterY"]
+    characterY = character_data["y"]
   except KeyError:
     characterY = 50
 
   try:
-    characterLevel = character_data["characterLevel"]
+    characterLevel = character_data["level"]
   except KeyError:
     characterLevel = 1
 
   try:
-    characterXP = character_data["characterXP"]
+    characterXP = character_data["xp"]
   except KeyError:
     characterXP = 0
+  
+  try:
+    characterPlanetId = character_data["planet_id"]
+  except KeyError:
+    characterPlanetId = 1
+  
+  try:
+    characterMapId = character_data["map_id"]
+  except KeyError:
+    characterMapId = 1
 
   # print out characters info
   print(f'Position: {characterX}, {characterY}, Level: {characterLevel}, XP: {characterXP}')
 
+  def map_transition(planet_id, map_id, x, y):
+    global characterMapId
+    print(f'Planet_id: {planet_id}, map_id: {map_id}, x: {x}, y: {y}')
+    if planet_id == 1:
+      if map_id == 1:
+        if y == 0 and x > (SCREEN_WIDTH-characterWidth):
+          print(f'right spot')
+          characterMapId = 2
+          character.store_info([{'map_id': characterMapId, 'planet_id': characterPlanetId}])
 
   loopCounter = 0
 
@@ -104,24 +109,28 @@ if __name__ == "__main__":
     if keys[K_UP] or keys[K_w]:
       characterY -= velocity
       if characterY < 0:
+        characterMapId = game_map.transition(SCREEN_HEIGHT, SCREEN_WIDTH, characterWidth, characterHeight, characterPlanetId, characterMapId, characterX, characterY)
         characterY = 0
 
     # down
     if keys[K_DOWN] or keys[K_s]:
       characterY += velocity
       if characterY+characterHeight > SCREEN_HEIGHT:
+        characterMapId = game_map.transition(SCREEN_HEIGHT, SCREEN_WIDTH, characterWidth, characterHeight, characterPlanetId, characterMapId, characterX, characterY)
         characterY = SCREEN_HEIGHT-characterHeight
 
     # left
     if keys[K_LEFT] or keys[K_a]:
       characterX -= velocity
       if characterX < 0:
+        characterMapId = game_map.transition(SCREEN_HEIGHT, SCREEN_WIDTH, characterWidth, characterHeight, characterPlanetId, characterMapId, characterX, characterY)
         characterX = 0
 
     # right
     if keys[K_RIGHT] or keys[K_d]:
       characterX += velocity
       if characterX+characterWidth > SCREEN_WIDTH:
+        characterMapId = game_map.transition(SCREEN_HEIGHT, SCREEN_WIDTH, characterWidth, characterHeight, characterPlanetId, characterMapId, characterX, characterY)
         characterX = SCREEN_WIDTH-characterWidth
 
 
@@ -130,7 +139,7 @@ if __name__ == "__main__":
     pygame.display.update()
 
     loopCounter += 1
-    if loopCounter % 300 == 0:
-      character.store_info([{'characterX': characterRect.x, 'characterY': characterRect.y}])
+    if loopCounter % 150 == 0:
+      character.store_info([{'x': characterRect.x, 'y': characterRect.y}])
 
     Clock.tick(30)
