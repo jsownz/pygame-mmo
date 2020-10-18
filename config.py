@@ -9,6 +9,7 @@ SCREEN_WIDTH = 800
 characterHeight = 60
 characterWidth = 40
 velocity = 25
+loopCounter = 0
 
 pygame.init()
 

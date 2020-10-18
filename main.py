@@ -3,6 +3,7 @@ import pygame
 import character
 import player
 import game_map
+import game_screen
 
 # import locals for key coordinates
 from pygame.locals import (
@@ -27,7 +28,8 @@ from config import (
   characterWidth,
   velocity,
   screen,
-  Clock
+  Clock,
+  loopCounter
 )
 
 if __name__ == "__main__":
@@ -66,18 +68,6 @@ if __name__ == "__main__":
 
   # print out characters info
   print(f'Position: {characterX}, {characterY}, Level: {characterLevel}, XP: {characterXP}')
-
-  def map_transition(planet_id, map_id, x, y):
-    global characterMapId
-    print(f'Planet_id: {planet_id}, map_id: {map_id}, x: {x}, y: {y}')
-    if planet_id == 1:
-      if map_id == 1:
-        if y == 0 and x > (SCREEN_WIDTH-characterWidth):
-          print(f'right spot')
-          characterMapId = 2
-          character.store_info([{'map_id': characterMapId, 'planet_id': characterPlanetId}])
-
-  loopCounter = 0
 
   # game loop variable
   running = True
@@ -134,12 +124,6 @@ if __name__ == "__main__":
         characterX = SCREEN_WIDTH-characterWidth
 
 
-    screen.fill((0,0,0))
-    characterRect = pygame.draw.rect(screen, (255, 0, 0), (characterX, characterY, characterWidth, characterHeight))
-    pygame.display.update()
-
-    loopCounter += 1
-    if loopCounter % 150 == 0:
-      character.store_info([{'x': characterRect.x, 'y': characterRect.y}])
+    game_screen.update_screen(screen, (255,0,0), characterX, characterY, characterWidth, characterHeight)
 
     Clock.tick(30)
